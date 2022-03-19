@@ -1,0 +1,40 @@
+version: "3.3"
+services:
+  mongodb:
+    image: 'mongo'
+    volumes:
+      - data:/data/db
+    # environment: 
+      # MONGO_INITDB_ROOT_USERNAME: ahmed
+      # MONGO_INITDB_ROOT_PASSWORD: salah
+    env_file:
+      - ./env/mongo.env
+
+  backend:
+    build: ./backend
+    ports:
+      - '86:80'
+    volumes:
+      - logs:/opt/logs
+      - ./backend:/opt
+      - /opt/node_modules
+    env_file:
+     - ./env/backend.env
+    depends_on:
+     - mongodb
+  frontend:
+    build: ./frontend
+    volumes:
+      - ./frontend/src:/opt/src
+    ports:
+      - '3000:3000'
+    stdin_open: true
+    tty: true
+    depends_on:
+     - backend
+volumes:
+  data:
+  logs:
+
+
+
